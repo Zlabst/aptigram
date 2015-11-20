@@ -21,15 +21,17 @@ namespace AptiGram.Modules
                 {
                     using (var client = new WebClient())
                     {
-                        var json =  client.DownloadString(new Uri("https://api.instagram.com/v1/users/2261366739/media/recent?access_token=" + ConfigurationManager.AppSettings["access_token"]));
+                        var json = client.DownloadString(new Uri("https://api.instagram.com/v1/users/2261366739/media/recent?access_token=" + ConfigurationManager.AppSettings["access_token"]));
                         var parsedJson = JsonConvert.DeserializeObject<Rootobject>(json);
 
-                        return parsedJson.data.Where(x => x.type == "image").Select(x => new PublishedImage
+                        IEnumerable<PublishedImage> publishedImages = parsedJson.data.Where(x => x.type == "image").Select(x => new PublishedImage
                             {
-                                Caption = x.caption.text,
+                                Caption = x.caption == null ? "" : x.caption.text,
                                 Url = x.images.standard_resolution.url,
-                                Location = x.location.name
-                            });
+                                Location = x.location == null ? "" : x.location.name,
+                            }).ToList();
+
+                        return Response.AsJson(publishedImages);
                     }
                 };
         }
