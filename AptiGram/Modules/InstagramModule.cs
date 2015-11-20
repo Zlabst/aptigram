@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Nancy.LightningCache.Extensions;
 using Newtonsoft.Json;
 using System.Configuration;
 
@@ -31,7 +32,7 @@ namespace AptiGram.Modules
                                 Location = x.location == null ? "" : x.location.name,
                             }).ToList();
 
-                        return Response.AsJson(publishedImages);
+                        return Response.AsJson(publishedImages).AsCacheable(DateTime.Now.AddMinutes(5));
                     }
                 };
         }
