@@ -79,6 +79,7 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AptiGramBootstrapper.cs" />
     <Compile Include="Models\PublishedImage.cs" />
     <Compile Include="Models\Rootobject.cs" />
     <Compile Include="Modules\InstagramModule.cs" />
