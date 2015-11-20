@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using Nancy;
+﻿using Nancy;
+using Nancy.Bootstrapper;
+using Nancy.TinyIoc;
 
 namespace AptiGram
 {
@@ -12,6 +10,13 @@ namespace AptiGram
         {
             StaticConfiguration.DisableErrorTraces = false;
             base.ApplicationStartup(container, pipelines);
+        }
+
+        protected override void RequestStartup(TinyIoCContainer container, IPipelines pipelines, NancyContext context)
+        {
+            pipelines.AfterRequest.AddItemToEndOfPipeline((ctx) => ctx.Response.WithHeader("Access-Control-Allow-Origin", "*")
+                                                                      .WithHeader("Access-Control-Allow-Methods", "GET")
+                                                                      .WithHeader("Access-Control-Allow-Headers", "Accept, Origin, Content-type"));
         }
     }
 }
