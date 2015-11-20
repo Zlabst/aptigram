@@ -1,2 +1,2 @@
 # aptigram
-Instagram api
+Instagram api for webpage
