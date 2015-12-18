@@ -5,6 +5,7 @@ using Nancy.Bootstrapper;
 using Nancy.LightningCache.Extensions;
 using Nancy.Routing;
 using Nancy.TinyIoc;
+using System.Web.Hosting;
 
 namespace AptiGram
 {
