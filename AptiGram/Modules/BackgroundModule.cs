@@ -1,11 +1,12 @@
-﻿using System.Net;
-using AptiGram.Models;
+﻿using AptiGram.Models;
 using Nancy;
-using System;
-using System.Linq;
 using Newtonsoft.Json;
-using System.Configuration;
 using Octokit;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace AptiGram.Modules
@@ -22,11 +23,11 @@ namespace AptiGram.Modules
                         var parsedJson = JsonConvert.DeserializeObject<Rootobject>(json);
 
                         var publishedImages = parsedJson.data.Where(x => x.type == "image").Select(x => new PublishedImage
-                            {
-                                Caption = x.caption == null ? "" : x.caption.text,
-                                Url = x.images.standard_resolution.url,
-                                Location = x.location == null ? "" : x.location.name,
-                            }).ToList();
+                        {
+                            Caption = x.caption == null ? "" : x.caption.text,
+                            Url = x.images.standard_resolution.url,
+                            Location = x.location == null ? "" : x.location.name,
+                        }).ToList();
 
                         var serializedJson = JsonConvert.SerializeObject(publishedImages);
                         await PublishToGitAsync(serializedJson);
@@ -45,15 +46,26 @@ namespace AptiGram.Modules
             };
 
             var client = new GitHubClient(connection);
-            
+
             var contents = await client.Repository.Content.GetAllContents("aptitud", "aptitud.github.io", "instagram.json");
+            if (JsonIsSame(contents, json))
+                return;
+
             string fileSha = contents.First().Sha;
             await client.Repository.Content.UpdateFile(
                 "aptitud",
                 "aptitud.github.io",
-                "instagram.json", 
+                "instagram.json",
                 new UpdateFileRequest("Update", json, fileSha));
 
+        }
+
+        private bool JsonIsSame(IReadOnlyList<RepositoryContent> contents, string json)
+        {
+            var gitHubJson = contents?.First()?.Content?.Replace(" ", "").Replace(Environment.NewLine, "");
+            var instagramJson = json?.Replace(" ", "").Replace(Environment.NewLine, "");
+
+            return string.Compare(gitHubJson, instagramJson, true) == 0;
         }
     }
 }
