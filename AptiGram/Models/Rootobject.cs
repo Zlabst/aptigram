@@ -69,7 +69,7 @@
         public float latitude { get; set; }
         public string name { get; set; }
         public float longitude { get; set; }
-        public int id { get; set; }
+        public long id { get; set; }
     }
 
     public class Comments
